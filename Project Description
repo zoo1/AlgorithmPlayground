@@ -1,0 +1,10 @@
+The aim of this project is to implement many procedural generation algorithms for 2d dungeons. It will feature a form in which you can select the custom properties you want to fall into the generation of your dungeon. The generation will be done in a seperate window. 
+Features:
+-Rectangular rooms
+-Circular rooms
+
+
+Algorithms:
+-Tinykeep algorithm
+-randomly generated coordinates algorithm with making sure no rooms overlap or there is a certain amount of overlappings
+
