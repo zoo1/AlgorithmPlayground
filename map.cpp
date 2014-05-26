@@ -90,7 +90,7 @@ void Map::paintEvent(QPaintEvent *e)
         case 1:
         {
             std::cout<<"Rooms: "<<totalrooms<<std::endl;
-            rooms.resize(totalrooms);
+            rooms.resize(0);
             int offset=0;
             int offsetx=100;
             for(int i=0;i<totalrooms;i++)
