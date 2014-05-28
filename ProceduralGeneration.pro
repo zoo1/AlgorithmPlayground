@@ -16,12 +16,12 @@ SOURCES += main.cpp\
         generation.cpp \
     Util.cpp \
     map.cpp \
-    rect.cpp
+    room.cpp
 
 HEADERS  += generation.h \
     Util.h \
     map.h \
-    rect.h
+    room.h
 
 FORMS    += generation.ui
 

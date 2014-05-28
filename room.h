@@ -2,10 +2,7 @@
 #define ROOM_H
 
 #include <QWidget>
-
-namespace Ui {
-class Room;
-}
+#include "QPolygon"
 
 class Room : public QWidget
 {
@@ -13,10 +10,17 @@ class Room : public QWidget
 
 public:
     explicit Room(QWidget *parent = 0);
+    explicit Room(int,int,QWidget *parent=0);
     ~Room();
+    void translate(int,int);
+    int ceny();
+    int cenx();
 
+protected:
+    void paintEvent(QPaintEvent *e);
 private:
-    Ui::Room *ui;
+    QPolygon poly;
+    int centx,centy;
 };
 
 #endif // ROOM_H

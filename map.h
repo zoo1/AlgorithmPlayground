@@ -10,9 +10,10 @@ class Map : public QWidget
 public:
     explicit Map(QWidget *parent = 0);
     ~Map();
-
-protected:
-    void paintEvent(QPaintEvent *e);
+private slots:
+    void stage1();
+    void stage2();
+    void stage3();
 };
 
 #endif // MAP_H
