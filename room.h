@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include "QPolygon"
+#include <vector>
+
 
 class Room : public QWidget
 {
@@ -12,15 +14,18 @@ public:
     explicit Room(QWidget *parent = 0);
     explicit Room(int,int,QWidget *parent=0);
     ~Room();
-    void translate(int,int);
-    int ceny();
-    int cenx();
+    void addDoor(QLine);
+    void setspot(bool);
+    void addconnects(Room*);
 
 protected:
     void paintEvent(QPaintEvent *e);
 private:
     QPolygon poly;
     int centx,centy;
+    bool isspawn,issexit;
+    std::vector <Room*> connects;
+    std::vector <QLine> doors;
 };
 
 #endif // ROOM_H
