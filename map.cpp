@@ -41,6 +41,7 @@ Map::~Map()
 //Used to create hallways and add doors
 void Map::createhallways(Room * r1, Room * r2)
 {
+    std::cout<<"function"<<std::endl;
     //horizontal hallways based off of r1
     Hallway *h1;
     bool dir1;
@@ -132,7 +133,7 @@ void Map::stage1()
         {
             width=height=(rand()%40+9)*2;
         }
-        if(offsety>this->maximumHeight()-100)
+        if(offsety>(this->height()-100))
         {
             offsety=0;
             offsetx=offsetx+100;
@@ -164,10 +165,10 @@ void Map::stage2()
             while(roo!=rooms.at(i))
             {
                 //if x is between the room-roo width and room+width
-                if(x>(rooms.at(i)->pos().x()-roo->size().width())&&(x<(rooms.at(i)->pos().x()+rooms.at(i)->size().width())))
+                if(x>(rooms.at(i)->x()-roo->width())&&(x<(rooms.at(i)->x()+rooms.at(i)->width())))
                 {
                     //if y is between the room-roo height and room+height
-                    if(y>(rooms.at(i)->pos().x()-roo->size().height())&&(y<rooms.at(i)->pos().y()+rooms.at(i)->size().height()))
+                    if(y>(rooms.at(i)->y()-roo->height())&&(y<rooms.at(i)->y()+rooms.at(i)->height()))
                     {
                         isoverlap=true;
                         x=rand()%(size().width()-100)+5;
@@ -209,10 +210,12 @@ void Map::stage3()
     //just add in the first line as a base point
     lines[q].r1->addconnects(lines[q].r2);
     lines[q].r2->addconnects(lines[q].r1);
+    createhallways(lines[q].r1,lines[q].r2);
     Room* included[rooms.size()];
     included[incpoint++]=lines[q].r1;
     included[incpoint++]=lines[q].r2;
     q++;
+    //add connections between the rest of the rooms
     while(incpoint!=rooms.size()||q==(rooms.size()*rooms.size())-rooms.size()-1)
     {
         bool p1=false,p2=false;
@@ -229,7 +232,7 @@ void Map::stage3()
         {
             lines[q].r1->addconnects(lines[q].r2);
             lines[q].r2->addconnects(lines[q].r1);
-
+            createhallways(lines[q].r1,lines[q].r2);
             if(!p1)
                 included[incpoint++]=lines[q].r1;
             if(!p2)
@@ -237,33 +240,6 @@ void Map::stage3()
             q=1;
         }
     }
-    //Hallway Creation
-    Room* includee[rooms.size()];
-    int incred=0;
-    QList<Room*> roos=this->findChildren<Room*>();
-    foreach(Room* roo,roos)
-    {
-        std::vector <Room*> con=roo->getconnects();
-        for(int j=0;j<con.size();j++)
-        {
-            bool p1=false,p2=false;
-            for(int i=0;i<incred;i++)
-            {
-                if(includee[i]==roo)
-                    p1=true;
-                if(includee[i]==con[j])
-                    p2=true;
-            }
-            //if the hallway is not already made
-            if(!(p1&&p2))
-            {
-                if(!p1)
-                    includee[incred++]=roo;
-                if(!p2)
-                    includee[incred++]=con[j];
-                createhallways(roo,con[j]);
-            }
-        }
-    }
+
 }
 
