@@ -1,5 +1,8 @@
 #include "room.h"
 #include "QPainter"
+#include <iostream>
+#include "map.h"
+#include "QStyle"
 
 Room::Room(QWidget *parent) :
     QWidget(parent)
@@ -46,15 +49,29 @@ void Room::addconnects(Room *connect)
     connects.push_back(connect);
 }
 
+std::vector<Room *> Room::getconnects()
+{
+    return connects;
+}
+
 void Room::paintEvent(QPaintEvent *e)
 {
     QPainter painter(this);
     painter.drawPolygon(poly);
-    QPen pen(Qt::red);
-    pen.setWidth(3);
+    QPen pen(this->palette().background().color());
     painter.setPen(pen);
     for(int i=0;i<doors.size();i++)
     {
         painter.drawLine(doors[i]);
     }
+}
+
+//Report to the parent widget the current details of the room
+void Room::mousePressEvent(QMouseEvent *)
+{
+    QString name=QString::fromStdString("Name : %1. ").arg(objectName());
+    QString sizz=QString::fromStdString("Size(H/W) : %1/").arg(size().height());
+    QString sizz1=QString::fromStdString("%1. ").arg(size().width());
+    QString doorz=QString::fromStdString("Doors : %1. ").arg(doors.size());
+    ((Map *)parent())->Display(name.append(sizz).append(sizz1).append(doorz));
 }

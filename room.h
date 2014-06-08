@@ -17,12 +17,13 @@ public:
     void addDoor(QLine);
     void setspot(bool);
     void addconnects(Room*);
+    std::vector <Room*> getconnects();
 
 protected:
     void paintEvent(QPaintEvent *e);
+    void mousePressEvent(QMouseEvent *);
 private:
     QPolygon poly;
-    int centx,centy;
     bool isspawn,issexit;
     std::vector <Room*> connects;
     std::vector <QLine> doors;

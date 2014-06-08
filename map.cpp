@@ -1,12 +1,13 @@
 #include "map.h"
-#include "QPainter"
-#include <unistd.h>
+#include "qlabel.h"
 #include "iostream"
 #include "QTimer"
 #include <math.h>
 #include <vector>
 #include <stdlib.h>
 #include "room.h"
+#include "hallway.h"
+#include "Util.h"
 
 //Globals to transfer over data when the widget is first created
 extern int Area;
@@ -18,7 +19,17 @@ Map::Map(QWidget *parent) :
     QWidget(parent, Qt::Window)
 {
     this->showMaximized();
+    QLabel *desc = new QLabel(this);
+    desc->setObjectName("desc");
+    desc->setGeometry(0,0,maximumWidth(),10);
+    desc->show();
     QTimer::singleShot(50, this, SLOT(stage1()));
+}
+
+void Map::Display(QString out)
+{
+    QLabel *desc=findChild<QLabel *>("desc");
+    desc->setText(out);
 }
 
 
@@ -27,26 +38,78 @@ Map::~Map()
 
 }
 
-//Used for the connection algorithm
-struct connect {
-  Room* r1;
-  Room* r2;
-} ;
-
-//compare lines based on thier length
-int compareconnect(const void * a, const void * b)
+//Used to create hallways and add doors
+void Map::createhallways(Room * r1, Room * r2)
 {
-    struct connect t1=*(struct connect*)a;
-    struct connect t2=*(struct connect*)b;
-    int dx1=(t1.r1->pos().x()+(t1.r1->width()/2))-(t1.r2->pos().x()+(t1.r2->width()/2));
-    int dy1=(t1.r1->pos().y()+(t1.r1->height()/2))-(t1.r2->pos().y()+(t1.r2->height()/2));
-    int dx2=(t2.r1->pos().x()+(t1.r1->width()/2))-(t2.r2->pos().x()+(t1.r2->width()/2));
-    int dy2=(t2.r1->pos().y()+(t1.r1->height()/2))-(t2.r2->pos().y()+(t1.r2->height()/2));
-    int alength=sqrt(pow(dx1,2)+pow(dy1,2));
-    int blength=sqrt(pow(dx2,2)+pow(dy2,2));
-    if ( alength <  blength) return -1;
-    if ( alength == blength ) return 0;
-    if ( alength >  blength ) return 1;
+    //horizontal hallways based off of r1
+    Hallway *h1;
+    bool dir1;
+    if(r2->pos().x()>r1->pos().x())
+    {
+        int horlength=abs((r1->pos().x()+(r1->size().width()))-(r2->pos().x()+(r2->size().width()/2)+3));
+        Hallway *hall = new Hallway(6,horlength,false,this);
+        h1=hall;
+        dir1=true;
+        hall->setGeometry(r1->pos().x()+r1->size().width(),r1->pos().y()+(r1->size().height()/2)-3,horlength,6);
+        hall->show();
+        r1->addDoor(QLine(r1->size().width()-1,(r1->size().height()/2)-2,r1->size().width()-1,(r1->size().height()/2)+1));
+        r1->update();
+    }
+    else
+    {
+        int horlength=abs((r1->pos().x())-(r2->pos().x()+(r2->size().width()/2)-3));
+        Hallway *hall = new Hallway(6,horlength,false,this);
+        h1=hall;
+        dir1=false;
+        hall->setGeometry(r1->pos().x()-horlength,r1->pos().y()+(r1->size().height()/2)-3,horlength,6);
+        hall->show();
+        r1->addDoor(QLine(0,(r1->size().height()/2)-2,0,(r1->size().height()/2)+1));
+        r1->update();
+    }
+    //vertical hallways based off of r2 heading up off of r2
+    if(r1->pos().y()<r2->pos().y())
+    {
+       int horlength=r2->pos().y()-(r1->pos().y()+(r1->size().height()/2)-3);
+       Hallway *hall = new Hallway(horlength,6,true,this);
+       hall->setGeometry(r2->pos().x()+(r2->size().width()/2)-3,r2->pos().y()-horlength,6,horlength);
+       hall->show();
+       r2->addDoor(QLine((r2->size().width()/2)-2,0,(r2->size().width()/2)+1,0));
+       r2->update();
+       //adding a door to both always to where they connect for upward hallway
+       if(dir1)
+       {
+           (h1)->addDoor(QLine((h1)->width()-1,6,(h1)->width()-5,6));
+           hall->addDoor(QLine(0,2,0,3));
+
+       }
+       else
+       {
+           (h1)->addDoor(QLine(0,6,4,6));
+           hall->addDoor(QLine(6,2,6,3));
+       }
+    }
+    //vertical hallway heading down off of r2
+    else
+    {
+        int horlength=(r1->pos().y()+(r1->size().height()/2)+3)-(r2->pos().y()+r2->size().height());
+        Hallway *hall = new Hallway(horlength,6,true,this);
+        hall->setGeometry(r2->pos().x()+(r2->size().width()/2)-3,r2->pos().y()+r2->size().height(),6,horlength);
+        hall->show();
+        r2->addDoor(QLine((r2->width()/2)-2,r2->height()-1,(r2->width()/2)+1,r2->height()-1));
+        r2->update();
+        //adding a door to both always to where they connect for downward hallway
+        if(dir1)
+        {
+            (h1)->addDoor(QLine((h1)->width()-1,0,(h1)->width()-5,0));
+            hall->addDoor(QLine(0,hall->height()-3,0,hall->height()-4));
+
+        }
+        else
+        {
+            (h1)->addDoor(QLine(0,0,4,0));
+            hall->addDoor(QLine(6,hall->height()-3,6,hall->height()-4));
+        }
+    }
 }
 
 //Create each of the rooms of different shapes and sizes
@@ -75,8 +138,9 @@ void Map::stage1()
             offsetx=offsetx+100;
         }
         Room *troom = new Room(height,width,this);
-        troom->setObjectName("Room"+i);
-        troom->setGeometry(offsetx,offsety,height,width);
+        QString name=QString("Room %1").arg(i);
+        troom->setObjectName(name);
+        troom->setGeometry(offsetx,offsety,width,height);
         troom->show();
         offsety=offsety+height+2;
     }
@@ -131,8 +195,6 @@ void Map::stage3()
         {
             if(roo!=too)
             {
-                //QLine temp(roo->pos().x()+(roo->width()/2),roo->pos().y()+(roo->height()/2),too->pos().x()+(too->width()/2),too->pos().y()+(too->height()/2));
-                //lines[p++]=temp;
                 struct connect temp;
                 temp.r1=roo;
                 temp.r2=too;
@@ -167,6 +229,7 @@ void Map::stage3()
         {
             lines[q].r1->addconnects(lines[q].r2);
             lines[q].r2->addconnects(lines[q].r1);
+
             if(!p1)
                 included[incpoint++]=lines[q].r1;
             if(!p2)
@@ -174,6 +237,33 @@ void Map::stage3()
             q=1;
         }
     }
-    std::cout<<"it atleast works!"<<std::endl;
+    //Hallway Creation
+    Room* includee[rooms.size()];
+    int incred=0;
+    QList<Room*> roos=this->findChildren<Room*>();
+    foreach(Room* roo,roos)
+    {
+        std::vector <Room*> con=roo->getconnects();
+        for(int j=0;j<con.size();j++)
+        {
+            bool p1=false,p2=false;
+            for(int i=0;i<incred;i++)
+            {
+                if(includee[i]==roo)
+                    p1=true;
+                if(includee[i]==con[j])
+                    p2=true;
+            }
+            //if the hallway is not already made
+            if(!(p1&&p2))
+            {
+                if(!p1)
+                    includee[incred++]=roo;
+                if(!p2)
+                    includee[incred++]=con[j];
+                createhallways(roo,con[j]);
+            }
+        }
+    }
 }
 

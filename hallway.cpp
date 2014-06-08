@@ -6,7 +6,7 @@ Hallway::Hallway(QWidget *parent) :
 {
 
 }
-//horizontal if bool is true, vertical if false
+//horizontal if bool is false, vertical if true
 Hallway::Hallway(int height, int width,bool dir, QWidget *parent) :
     QWidget(parent)
 {
@@ -37,7 +37,7 @@ void Hallway::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     painter.drawLine(wall1);
     painter.drawLine(wall2);
-    QPen pen(Qt::red);
+    QPen pen(this->palette().background().color());
     pen.setWidth(3);
     painter.setPen(pen);
     for(int i=0;i<doors.size();i++)
