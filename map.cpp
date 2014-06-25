@@ -10,10 +10,9 @@
 #include "Util.h"
 
 //Globals to transfer over data when the widget is first created
-extern int Area;
 extern int RoomMin;
 extern int RoomMax;
-extern bool rectangular;
+extern bool rectangular,tunnels,circles;
 
 Map::Map(QWidget *parent) :
     QWidget(parent, Qt::Window)
@@ -41,74 +40,135 @@ Map::~Map()
 //Used to create hallways and add doors
 void Map::createhallways(Room * r1, Room * r2)
 {
-    std::cout<<"function"<<std::endl;
-    //horizontal hallways based off of r1
-    Hallway *h1;
-    bool dir1;
-    if(r2->pos().x()>r1->pos().x())
+    //Just a horizontal hallway is in need
+    if(!((r1->y()<r2->y()+6&&r1->y()+r1->height()<r2->y()+6)||(r1->y()>(r2->y()-6+r2->height())&&(r1->y()+r1->height())>(r2->y()-6+r2->height()))))
     {
-        int horlength=abs((r1->pos().x()+(r1->size().width()))-(r2->pos().x()+(r2->size().width()/2)+3));
-        Hallway *hall = new Hallway(6,horlength,false,this);
-        h1=hall;
-        dir1=true;
-        hall->setGeometry(r1->pos().x()+r1->size().width(),r1->pos().y()+(r1->size().height()/2)-3,horlength,6);
-        hall->show();
-        r1->addDoor(QLine(r1->size().width()-1,(r1->size().height()/2)-2,r1->size().width()-1,(r1->size().height()/2)+1));
-        r1->update();
-    }
-    else
-    {
-        int horlength=abs((r1->pos().x())-(r2->pos().x()+(r2->size().width()/2)-3));
-        Hallway *hall = new Hallway(6,horlength,false,this);
-        h1=hall;
-        dir1=false;
-        hall->setGeometry(r1->pos().x()-horlength,r1->pos().y()+(r1->size().height()/2)-3,horlength,6);
-        hall->show();
-        r1->addDoor(QLine(0,(r1->size().height()/2)-2,0,(r1->size().height()/2)+1));
-        r1->update();
-    }
-    //vertical hallways based off of r2 heading up off of r2
-    if(r1->pos().y()<r2->pos().y())
-    {
-       int horlength=r2->pos().y()-(r1->pos().y()+(r1->size().height()/2)-3);
-       Hallway *hall = new Hallway(horlength,6,true,this);
-       hall->setGeometry(r2->pos().x()+(r2->size().width()/2)-3,r2->pos().y()-horlength,6,horlength);
-       hall->show();
-       r2->addDoor(QLine((r2->size().width()/2)-2,0,(r2->size().width()/2)+1,0));
-       r2->update();
-       //adding a door to both always to where they connect for upward hallway
-       if(dir1)
-       {
-           (h1)->addDoor(QLine((h1)->width()-1,6,(h1)->width()-5,6));
-           hall->addDoor(QLine(0,2,0,3));
-
-       }
-       else
-       {
-           (h1)->addDoor(QLine(0,6,4,6));
-           hall->addDoor(QLine(6,2,6,3));
-       }
-    }
-    //vertical hallway heading down off of r2
-    else
-    {
-        int horlength=(r1->pos().y()+(r1->size().height()/2)+3)-(r2->pos().y()+r2->size().height());
-        Hallway *hall = new Hallway(horlength,6,true,this);
-        hall->setGeometry(r2->pos().x()+(r2->size().width()/2)-3,r2->pos().y()+r2->size().height(),6,horlength);
-        hall->show();
-        r2->addDoor(QLine((r2->width()/2)-2,r2->height()-1,(r2->width()/2)+1,r2->height()-1));
-        r2->update();
-        //adding a door to both always to where they connect for downward hallway
-        if(dir1)
+        int ypos;
+        if(r1->y()>r2->y())
+            ypos=r1->y();
+        else
+            ypos=r2->y();
+        if(r1->x()<r2->x())
         {
-            (h1)->addDoor(QLine((h1)->width()-1,0,(h1)->width()-5,0));
-            hall->addDoor(QLine(0,hall->height()-3,0,hall->height()-4));
-
+            Hallway *hall = new Hallway(6,r2->x()-(r1->x()+r1->width()),false,this);
+            hall->setGeometry(r1->x()+r1->width(),ypos,r2->x()-(r1->x()+r1->width()),6);
+            hall->show();
+            r1->addDoor(QLine(r1->width()-1,ypos+1-r1->y(),r1->width()-1,ypos+4-r1->y()));
+            r1->update();
+            r2->addDoor(QLine(0,ypos+1-r2->y(),0,ypos+4-r2->y()));
+            r2->update();
         }
         else
         {
-            (h1)->addDoor(QLine(0,0,4,0));
-            hall->addDoor(QLine(6,hall->height()-3,6,hall->height()-4));
+            Hallway *hall = new Hallway(6,r1->x()-(r2->x()+r2->width()),false,this);
+            hall->setGeometry(r2->x()+r2->width(),ypos,r1->x()-(r2->x()+r2->width()),6);
+            hall->show();
+            r1->addDoor(QLine(0,ypos+1-r1->y(),0,ypos+4-r1->y()));
+            r1->update();
+            r2->addDoor(QLine(r2->width()-1,ypos+1-r2->y(),r2->width()-1,ypos+4-r2->y()));
+            r2->update();
+        }
+    }
+    //Just a vertical hallway is in need
+    else if(!((r1->x()<r2->x()+6&&r1->x()+r1->width()<r2->x()+6)||(r1->x()>(r2->x()-6+r2->width())&&(r1->x()+r1->width()>(r2->x()-6+r2->width())))))
+    {
+        int xpos;
+        if(r1->x()>r2->x())
+            xpos=r1->x();
+        else
+            xpos=r2->x();
+
+        if(r1->y()>r2->y())
+        {
+            Hallway *hall = new Hallway(r1->y()-(r2->y()+r2->height()),6,true,this);
+            hall->setGeometry(xpos,r2->y()+r2->height(),6,r1->y()-(r2->y()+r2->height()));
+            hall->show();
+            r1->addDoor(QLine(xpos+1-r1->x(),0,xpos+4-r1->x(),0));
+            r1->update();
+            r2->addDoor(QLine(xpos+1-r2->x(),r2->height()-1,xpos+4-r2->x(),r2->height()-1));
+            r2->update();
+        }
+        else
+        {
+            Hallway *hall = new Hallway(r2->y()-(r1->y()+r1->height()),6,true,this);
+            hall->setGeometry(xpos,r1->y()+r1->height(),6,r2->y()-(r1->y()+r1->height()));
+            hall->show();
+            r1->addDoor(QLine(xpos+1-r1->x(),r1->height()-1,xpos+4-r1->x(),r1->height()));
+            r1->update();
+            r2->addDoor(QLine(xpos+1-r2->x(),0,xpos+4-r2->x(),0));
+            r2->update();
+        }
+    }
+    else
+    {
+        //horizontal hallways based off of r1
+        Hallway *h1;
+        bool dir1;
+        if((r2->x()+r2->width()/2)>(r1->x()+r1->width()/2))
+        {
+            int horlength=abs((r1->x()+(r1->size().width()))-(r2->x()+(r2->size().width()/2)+3));
+            Hallway *hall = new Hallway(6,horlength,false,this);
+            h1=hall;
+            dir1=true;
+            hall->setGeometry(r1->x()+r1->size().width(),r1->y()+(r1->size().height()/2)-3,horlength,6);
+            hall->show();
+            r1->addDoor(QLine(r1->size().width()-1,(r1->size().height()/2)-2,r1->size().width()-1,(r1->size().height()/2)+1));
+            r1->update();
+        }
+        else
+        {
+            int horlength=abs((r1->x())-(r2->x()+(r2->size().width()/2)-3));
+            Hallway *hall = new Hallway(6,horlength,false,this);
+            h1=hall;
+            dir1=false;
+            hall->setGeometry(r1->x()-horlength,r1->y()+(r1->size().height()/2)-3,horlength,6);
+            hall->show();
+            r1->addDoor(QLine(0,(r1->size().height()/2)-2,0,(r1->size().height()/2)+1));
+            r1->update();
+        }
+        //vertical hallways based off of r2 heading up off of r2
+        if((r1->y()+r1->height()/2)<(r2->y()+r2->height()/2))
+        {
+            int horlength=r2->y()-(r1->y()+(r1->size().height()/2)-3);
+            Hallway *hall = new Hallway(horlength,6,true,this);
+            hall->setGeometry(r2->x()+(r2->size().width()/2)-3,r2->y()-horlength,6,horlength);
+            hall->show();
+            r2->addDoor(QLine((r2->size().width()/2)-2,0,(r2->size().width()/2)+1,0));
+            r2->update();
+            //adding a door to both always to where they connect for upward hallway
+            if(dir1)
+            {
+                (h1)->addDoor(QLine((h1)->width()-1,6,(h1)->width()-5,6));
+                hall->addDoor(QLine(0,2,0,3));
+
+            }
+            else
+            {
+                (h1)->addDoor(QLine(0,6,4,6));
+                hall->addDoor(QLine(6,2,6,3));
+            }
+        }
+        //vertical hallway heading down off of r2
+        else
+        {
+            int horlength=(r1->y()+(r1->size().height()/2)+3)-(r2->y()+r2->size().height());
+            Hallway *hall = new Hallway(horlength,6,true,this);
+            hall->setGeometry(r2->x()+(r2->size().width()/2)-3,r2->y()+r2->size().height(),6,horlength);
+            hall->show();
+            r2->addDoor(QLine((r2->width()/2)-2,r2->height()-1,(r2->width()/2)+1,r2->height()-1));
+            r2->update();
+            //adding a door to both always to where they connect for downward hallway
+            if(dir1)
+            {
+                (h1)->addDoor(QLine((h1)->width()-1,0,(h1)->width()-5,0));
+                hall->addDoor(QLine(0,hall->height()-3,0,hall->height()-4));
+
+            }
+            else
+            {
+                (h1)->addDoor(QLine(0,0,4,0));
+                hall->addDoor(QLine(6,hall->height()-3,6,hall->height()-4));
+            }
         }
     }
 }
@@ -117,7 +177,16 @@ void Map::createhallways(Room * r1, Room * r2)
 void Map::stage1()
 {
     int totalrooms=((RoomMax==RoomMin) ? RoomMax : rand()%(RoomMax-RoomMin)+RoomMin);
+    // Quick print out of the map setup
     std::cout<<"Rooms: "<<totalrooms<<std::endl;
+    std::cout<<"Room types: Squares";
+    if(rectangular)
+        std::cout<<" Rectangles";
+    if(tunnels)
+        std::cout<<" Tunnel";
+    if(circles)
+        std::cout<<" Circles";
+    std::cout<<std::endl;
     int offsety=0;
     int offsetx=50;
 
@@ -240,6 +309,13 @@ void Map::stage3()
             q=1;
         }
     }
+    QTimer::singleShot(1000, this, SLOT(stage4()));
+
+}
+
+//Begin setting up the dificulty analytics and the beginning and end locations
+void Map::stage4()
+{
 
 }
 

@@ -16,6 +16,7 @@ private slots:
     void stage1();
     void stage2();
     void stage3();
+    void stage4();
 private:
     void createhallways(Room*, Room*);
 };

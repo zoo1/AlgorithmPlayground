@@ -5,11 +5,11 @@
 #include "map.h"
 
 //Globals
-bool errArea=true;
 bool errMin=true;
 bool errMax=true;
 bool rectangular=false;
-int Area=2500;
+bool tunnels=false;
+bool circles=false;
 int RoomMin=5;
 int RoomMax=10;
 
@@ -19,7 +19,7 @@ Generation::Generation(QWidget *parent) :
 {
     ui->setupUi(this);
     //setting the default values in the text boxes
-    ui->Area->setPlaceholderText("2500");
+    ui->Standard->setChecked(true);
     ui->Roommin->setPlaceholderText("5");
     ui->Roommax->setPlaceholderText("10");
 }
@@ -31,7 +31,7 @@ Generation::~Generation()
 
 void Generation::on_pushButton_clicked()
 {
-    if(errMin&&errMax&&errArea)
+    if(errMin&&errMax)
     {
     mymap =new Map(this);
     mymap->showMaximized();
@@ -40,43 +40,14 @@ void Generation::on_pushButton_clicked()
         std::cout<<"Error"<<std::endl;
 }
 
-void Generation::on_Area_textChanged()
-{
-    QString Areastr = ui->Area->toPlainText();
-    int Areaint=convert_value(Areastr);
-    //paint the textedit white if it has the correct text in it
-    if(Areaint!=-1)
-    {
-        errArea=true;
-        ui->Area->setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255) }");
-    }
-    //paint it red if it doesn't
-    else if(Areaint==-1)
-    {
-        errArea=false;
-        ui->Area->setStyleSheet("QTextEdit { background-color: rgb(255, 0, 0) }");
-    }
-    //if it is empty resore default
-    else if(Areaint!=-2)
-    {
-        Area=2500;
-    }
-}
-
 void Generation::on_Roommin_textChanged()
 {
     checkminmax();
 }
 
-
 void Generation::on_Roommax_textChanged()
 {
     checkminmax();
-}
-
-void Generation::on_checkBox_clicked()
-{
-    rectangular=(!rectangular);
 }
 
 void Generation::checkminmax()
@@ -154,4 +125,22 @@ void Generation::checkminmax()
             RoomMax=Maxint;
 
     }
+}
+
+/** Check boxes for selecting each of the different room types. In order rectangular, tunnels, and circles
+ *  Each changes a global which is passed over when a new map is created
+ **/
+void Generation::on_checkBox_clicked()
+{
+    rectangular=(!rectangular);
+}
+
+void Generation::on_checkBox_2_clicked()
+{
+    tunnels=(!tunnels);
+}
+
+void Generation::on_checkBox_3_clicked()
+{
+    circles=(!circles);
 }
