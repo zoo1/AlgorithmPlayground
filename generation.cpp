@@ -3,15 +3,20 @@
 #include "Util.h"
 #include <iostream>
 #include "map.h"
+#include "string"
+#include "sstream"
 
+//Defines
+#define MIN 25
+#define MAX 30
 //Globals
 bool errMin=true;
 bool errMax=true;
 bool rectangular=false;
 bool tunnels=false;
 bool circles=false;
-int RoomMin=5;
-int RoomMax=10;
+int RoomMin=MIN;
+int RoomMax=MAX;
 
 Generation::Generation(QWidget *parent) :
     QMainWindow(parent),
@@ -20,8 +25,10 @@ Generation::Generation(QWidget *parent) :
     ui->setupUi(this);
     //setting the default values in the text boxes
     ui->Standard->setChecked(true);
-    ui->Roommin->setPlaceholderText("5");
-    ui->Roommax->setPlaceholderText("10");
+    std::string min = static_cast<std::ostringstream*>( &(std::ostringstream() << MIN) )->str();
+    std::string max = static_cast<std::ostringstream*>( &(std::ostringstream() << MAX) )->str();
+    ui->Roommin->setPlaceholderText(QString::fromStdString(min));
+    ui->Roommax->setPlaceholderText(QString::fromStdString(max));
 }
 
 Generation::~Generation()
@@ -77,11 +84,11 @@ void Generation::checkminmax()
         errMax=errMin=true;
         ui->Roommin->setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255) }");
         ui->Roommax->setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255) }");
-        RoomMin=5;
-        RoomMax=10;
+        RoomMin=MIN;
+        RoomMax=MAX;
     }
     //overiding a default value
-    else if((Minint==-2&&5>Maxint)||(Maxint==-2&&10<Minint))
+    else if((Minint==-2&&MIN>Maxint)||(Maxint==-2&&MAX<Minint))
     {
         errMax=errMin=false;
         ui->Roommin->setStyleSheet("QTextEdit { background-color: rgb(255, 0, 0) }");
@@ -95,7 +102,7 @@ void Generation::checkminmax()
         ui->Roommin->setStyleSheet("QTextEdit { background-color: rgb(255, 0, 0) }");
         ui->Roommax->setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255) }");
         if(Maxint==-2)
-            RoomMax=10;
+            RoomMax=MAX;
         else
             RoomMax=Maxint;
     }
@@ -106,7 +113,7 @@ void Generation::checkminmax()
         ui->Roommax->setStyleSheet("QTextEdit { background-color: rgb(255, 0, 0) }");
         ui->Roommin->setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255) }");
         if(Minint==-2)
-            RoomMin=5;
+            RoomMin=MIN;
         else
             RoomMin=Minint;
     }
@@ -116,11 +123,11 @@ void Generation::checkminmax()
         ui->Roommin->setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255) }");
         ui->Roommax->setStyleSheet("QTextEdit { background-color: rgb(255, 255, 255) }");
         if(Minint==-2)
-            RoomMin=5;
+            RoomMin=MIN;
         else
             RoomMin=Minint;
         if(Maxint==-2)
-            RoomMax=10;
+            RoomMax=MAX;
         else
             RoomMax=Maxint;
 

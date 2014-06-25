@@ -30,18 +30,16 @@ void Room::addDoor(QLine doo)
     doors.push_back(doo);
 }
 
-//if true sets a spawn in the room if false sets exit
-void Room::setspot(bool spawnexit)
+//Function sets spawn and then checks for the appropriate place to set the spawn
+void Room::setspawn()
 {
-    if(spawnexit)
-    {
-        isspawn=true;
-    }
-    else
-    {
-        issexit=true;
-    }
+    isspawn=true;
+}
 
+//Function sets exit and then chexks for the appropriate place to set the exit
+void Room::setexit()
+{
+    issexit=true;
 }
 
 void Room::addconnects(Room *connect)
@@ -63,6 +61,14 @@ void Room::paintEvent(QPaintEvent *e)
     for(int i=0;i<doors.size();i++)
     {
         painter.drawLine(doors[i]);
+    }
+    if(isspawn)
+    {
+
+    }
+    if(issexit)
+    {
+
     }
 }
 

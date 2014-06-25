@@ -316,6 +316,8 @@ void Map::stage3()
 //Begin setting up the dificulty analytics and the beginning and end locations
 void Map::stage4()
 {
-
+    QList<Room*> rooms=this->findChildren<Room*>();
+    rooms.at(0)->setspawn();
+    rooms.at(0)->update();
 }
 

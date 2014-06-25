@@ -15,7 +15,8 @@ public:
     explicit Room(int,int,QWidget *parent=0);
     ~Room();
     void addDoor(QLine);
-    void setspot(bool);
+    void setspawn();
+    void setexit();
     void addconnects(Room*);
     std::vector <Room*> getconnects();
 
@@ -25,6 +26,7 @@ protected:
 private:
     QPolygon poly;
     bool isspawn,issexit;
+    int spawnx,spawny;
     std::vector <Room*> connects;
     std::vector <QLine> doors;
 };
