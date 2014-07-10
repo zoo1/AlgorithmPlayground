@@ -19,6 +19,7 @@ private slots:
     void stage4();
 private:
     void createhallways(Room*, Room*);
+    void recursiveDif(std::vector<Room *>,int);
 };
 
 #endif // MAP_H

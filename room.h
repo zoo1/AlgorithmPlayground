@@ -18,6 +18,8 @@ public:
     void setspawn();
     void setexit();
     void addconnects(Room*);
+    void setdifficulty(int);
+    int getdifficulty();
     std::vector <Room*> getconnects();
 
 protected:
@@ -26,7 +28,7 @@ protected:
 private:
     QPolygon poly;
     bool isspawn,issexit;
-    int spawnx,spawny;
+    int is,difficulty;
     std::vector <Room*> connects;
     std::vector <QLine> doors;
 };

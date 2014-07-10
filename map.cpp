@@ -173,6 +173,29 @@ void Map::createhallways(Room * r1, Room * r2)
     }
 }
 
+void Map::recursiveDif(std::vector<Room *> nodes, int difficulty)
+{
+    std::vector<Room*> next;
+    int i=0,j=0;
+    difficulty++;
+    for(;j<nodes.size();j++)
+    {
+        std::vector<Room*> conn=nodes.at(j)->getconnects();
+        for(i=0;i<conn.size();i++)
+        {
+            if(conn.at(i)->getdifficulty()<1)
+            {
+                conn.at(i)->setdifficulty(difficulty);
+                next.push_back(conn.at(i));
+            }
+        }
+    }
+    if(next.size()!=0)
+    {
+        recursiveDif(next,difficulty);
+    }
+}
+
 //Create each of the rooms of different shapes and sizes
 void Map::stage1()
 {
@@ -316,8 +339,29 @@ void Map::stage3()
 //Begin setting up the dificulty analytics and the beginning and end locations
 void Map::stage4()
 {
+    //Pick spawn room and DFS set difficulty
     QList<Room*> rooms=this->findChildren<Room*>();
-    rooms.at(0)->setspawn();
-    rooms.at(0)->update();
+    int i=0,difficulty=1;
+    while(rooms.at(i++)->getconnects().size()>1);
+    rooms.at(i-1)->setspawn();
+    rooms.at(i-1)->setdifficulty(difficulty);
+    rooms.at(i-1)->update();
+    std::vector<Room *> pass;
+    pass.push_back(rooms.at(i-1));
+    recursiveDif(pass,difficulty);
+    //Pick exit room
+    int j=0,maxdifficulty=0;
+    for(i=0;i<rooms.size();i++)
+    {
+        if(rooms[i]->getdifficulty()>maxdifficulty)
+        {
+            j=i;
+            maxdifficulty=rooms[i]->getdifficulty();
+        }
+    }
+    rooms[j]->setexit();
+    rooms[j]->update();
+    //Remove hallways overlapping rooms
+
 }
 
