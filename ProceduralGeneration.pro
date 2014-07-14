@@ -14,13 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         generation.cpp \
-    Util.cpp \
     map.cpp \
     room.cpp \
     hallway.cpp
 
 HEADERS  += generation.h \
-    Util.h \
     map.h \
     room.h \
     hallway.h
