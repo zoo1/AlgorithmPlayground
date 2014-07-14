@@ -362,6 +362,21 @@ void Map::stage4()
     rooms[j]->setexit();
     rooms[j]->update();
     //Remove hallways overlapping rooms
-
+    QList<Hallway*> hallways=this->findChildren<Hallway*>();
+    for(i=0;i<rooms.size();i++)
+    {
+        for(j=0;j<hallways.size();j++)
+        {
+            //Horizontal Overlap
+            if(!(rooms[i]->x()>=(hallways[j]->x()+hallways[j]->width())||(rooms[i]->x()+rooms[i]->width())<=hallways[j]->x()))
+            {
+                //Vertical Overlap
+                if(!(rooms[i]->y()>=(hallways[j]->y()+hallways[j]->height())||(rooms[i]->y()+rooms[i]->height())<=hallways[j]->y()))
+                {
+                    std::cout<<"overlap"<<std::endl;
+                }
+            }
+        }
+    }
 }
 

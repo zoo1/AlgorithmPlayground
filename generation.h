@@ -30,6 +30,7 @@ private:
     Map *mymap;
     void checkminmax();
     void StartGeneration();
+    int convert_value(QString);
 };
 
 #endif // GENERATION_H

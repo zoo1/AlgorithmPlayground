@@ -15,9 +15,9 @@ public:
     explicit Room(int,int,QWidget *parent=0);
     ~Room();
     void addDoor(QLine);
+    void addconnects(Room*);
     void setspawn();
     void setexit();
-    void addconnects(Room*);
     void setdifficulty(int);
     int getdifficulty();
     std::vector <Room*> getconnects();
@@ -27,10 +27,10 @@ protected:
     void mousePressEvent(QMouseEvent *);
 private:
     QPolygon poly;
-    bool isspawn,issexit;
-    int is,difficulty;
     std::vector <Room*> connects;
     std::vector <QLine> doors;
+    bool isspawn,issexit;
+    int is,difficulty;
 };
 
 #endif // ROOM_H

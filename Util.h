@@ -8,5 +8,4 @@ struct connect {
   Room* r2;
 };
 int compareconnect(const void * a, const void * b);
-int convert_value(QString);
 #endif // UTIL_H
