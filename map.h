@@ -29,6 +29,7 @@ private:
     void createhallways(Room*, Room*);
     void recursiveDif(std::vector<Room *>,int);
     void removeoverlap(Room*,Hallway*);
+    bool isinside(Room*,QPoint);
 };
 
 #endif // MAP_H

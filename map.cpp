@@ -234,6 +234,7 @@ void Map::stage4()
     recursiveDif: A recursive function which iterates through the rooms and marks the difficulty of the room.
     removeoverlap: Removes the portions of a hallway which have overlapped into a room.
     compareconnect: Compares lines based on thier length.
+    isinside: Checks if a point is inside of a room.
   **/
 
 void Map::createhallways(Room * r1, Room * r2)
@@ -394,19 +395,41 @@ void Map::recursiveDif(std::vector<Room *> nodes, int difficulty)
     }
 }
 
-void Map::removeoverlap(Room *, Hallway *)
+void Map::removeoverlap(Room* room, Hallway* hallway)
 {
+    bool tl=isinside(room,hallway->pos());
+    bool tr=isinside(room,hallway->pos()+QPoint(hallway->width(),0));
+    bool bl=isinside(room,hallway->pos()+QPoint(0,hallway->height()));
+    bool br=isinside(room,hallway->pos()+QPoint(hallway->width(),hallway->height()));
+    if(tl&&tr)
+    {
 
+    }
+
+
+}
+
+bool Map::isinside(Room* room,QPoint p)
+{
+    if(p.y()<room->y())
+        return false;
+    if(p.x()<room->x())
+        return false;
+    if(p.y()>(room->y()+room->height()))
+        return false;
+    if(p.x()>(room->x()+room->width()))
+        return false;
+    return true;
 }
 
 int compareconnect(const void * a, const void * b)
 {
     struct connect t1=*(struct connect*)a;
     struct connect t2=*(struct connect*)b;
-    int dx1=(t1.r1->pos().x()+(t1.r1->width()/2))-(t1.r2->pos().x()+(t1.r2->width()/2));
-    int dy1=(t1.r1->pos().y()+(t1.r1->height()/2))-(t1.r2->pos().y()+(t1.r2->height()/2));
-    int dx2=(t2.r1->pos().x()+(t1.r1->width()/2))-(t2.r2->pos().x()+(t1.r2->width()/2));
-    int dy2=(t2.r1->pos().y()+(t1.r1->height()/2))-(t2.r2->pos().y()+(t1.r2->height()/2));
+    int dx1=(t1.r1->x()+(t1.r1->width()/2))-(t1.r2->x()+(t1.r2->width()/2));
+    int dy1=(t1.r1->y()+(t1.r1->height()/2))-(t1.r2->y()+(t1.r2->height()/2));
+    int dx2=(t2.r1->x()+(t2.r1->width()/2))-(t2.r2->x()+(t2.r2->width()/2));
+    int dy2=(t2.r1->y()+(t2.r1->height()/2))-(t2.r2->y()+(t2.r2->height()/2));
     int alength=sqrt(pow(dx1,2)+pow(dy1,2));
     int blength=sqrt(pow(dx2,2)+pow(dy2,2));
     if ( alength <  blength) return -1;
