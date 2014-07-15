@@ -111,28 +111,28 @@ void Room::paintEvent(QPaintEvent *e)
         switch(is)
         {
         case 0:
-            box<<QPoint(0,(width()/2)-3);
-            box<<QPoint(0,(width()/2)+3);
-            box<<QPoint(6,(width()/2)+3);
-            box<<QPoint(6,(width()/2)-3);
+            box<<QPoint(0,(height()/2)-3);
+            box<<QPoint(0,(height()/2)+3);
+            box<<QPoint(6,(height()/2)+3);
+            box<<QPoint(6,(height()/2)-3);
             break;
         case 1:
-            box<<QPoint((height()/2)-3,0);
-            box<<QPoint((height()/2)+3,0);
-            box<<QPoint((height()/2)+3,6);
-            box<<QPoint((height()/2)-3,6);
+            box<<QPoint((width()/2)-3,0);
+            box<<QPoint((width()/2)+3,0);
+            box<<QPoint((width()/2)+3,6);
+            box<<QPoint((width()/2)-3,6);
             break;
         case 2:
-            box<<QPoint(width()-1,0);
-            box<<QPoint(width()-1,0);
-            box<<QPoint(width()-7,6);
-            box<<QPoint(width()-7,6);
+            box<<QPoint(width()-1,(height()/2)-3);
+            box<<QPoint(width()-1,(height()/2)+3);
+            box<<QPoint(width()-7,(height()/2)+3);
+            box<<QPoint(width()-7,(height()/2)-3);
             break;
         case 3:
-            box<<QPoint((height()/2)-3,0);
-            box<<QPoint((height()/2)+3,0);
-            box<<QPoint((height()/2)+3,6);
-            box<<QPoint((height()/2)-3,6);
+            box<<QPoint((width()/2)-3,height()-1);
+            box<<QPoint((width()/2)+3,height()-1);
+            box<<QPoint((width()/2)+3,height()-7);
+            box<<QPoint((width()/2)-3,height()-7);
             break;
         }
         QBrush brush;
