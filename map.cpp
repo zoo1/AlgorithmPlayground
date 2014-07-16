@@ -54,12 +54,23 @@ void Map::stage1()
     // Quick print out of the map setup
     std::cout<<"Rooms: "<<totalrooms<<std::endl;
     std::cout<<"Room types: Squares";
+    std::vector<int> available;
+    available.push_back(0);
     if(rectangular)
+    {
         std::cout<<" Rectangles";
-    if(tunnels)
-        std::cout<<" Tunnel";
+        available.push_back(1);
+    }
     if(circles)
+    {
+        available.push_back(2);
         std::cout<<" Circles";
+    }
+    if(tunnels)
+    {
+        available.push_back(3);
+        std::cout<<" Tunnel";
+    }
     std::cout<<std::endl;
     int offsety=0;
     int offsetx=50;
@@ -67,25 +78,43 @@ void Map::stage1()
     for(int i=0;i<totalrooms;i++)
     {
         int width,height;
-        if(rectangular)
-        {
-            width=(rand()%40+9)*2;
-            height=(rand()%40+9)*2;
-        }
-        else
-        {
-            width=height=(rand()%40+9)*2;
-        }
         if(offsety>(this->height()-100))
         {
             offsety=0;
             offsetx=offsetx+100;
         }
-        Room *troom = new Room(height,width,this);
-        QString name=QString("Room %1").arg(i);
-        troom->setObjectName(name);
-        troom->setGeometry(offsetx,offsety,width,height);
-        troom->show();
+        switch(rand()%available.size())
+        {
+        case 0:
+        {
+            width=height=(rand()%40+9)*2;
+            Room *troom = new Room(height,width,this);
+            QString name=QString("Room %1").arg(i);
+            troom->setObjectName(name);
+            troom->setGeometry(offsetx,offsety,width,height);
+            troom->show();
+            break;
+        }
+        case 1:
+        {
+            width=(rand()%40+9)*2;
+            height=(rand()%40+9)*2;
+            Room *troom = new Room(height,width,this);
+            QString name=QString("Room %1").arg(i);
+            troom->setObjectName(name);
+            troom->setGeometry(offsetx,offsety,width,height);
+            troom->show();
+            break;
+        }
+        case 2:
+        {
+            break;
+        }
+        case 3:
+        {
+            break;
+        }
+        }
         offsety=offsety+height+2;
     }
     QTimer::singleShot(1000, this, SLOT(stage2()));
