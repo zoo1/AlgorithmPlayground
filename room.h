@@ -12,21 +12,17 @@ class Room : public QWidget
 
 public:
     explicit Room(QWidget *parent = 0);
-    explicit Room(int,int,QWidget *parent=0);
-    ~Room();
     void addDoor(QLine);
     void addconnects(Room*);
-    void setspawn();
-    void setexit();
+    virtual void setspawn()=0;
+    virtual void setexit()=0;
     void setdifficulty(int);
     int getdifficulty();
     std::vector <Room*> getconnects();
 
 protected:
-    void paintEvent(QPaintEvent *e);
+    virtual void paintEvent(QPaintEvent *e)=0;
     void mousePressEvent(QMouseEvent *);
-private:
-    QPolygon poly;
     std::vector <Room*> connects;
     std::vector <QLine> doors;
     bool isspawn,issexit;

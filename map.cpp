@@ -5,7 +5,7 @@
 #include <math.h>
 #include <vector>
 #include <stdlib.h>
-#include "room.h"
+#include "roomchildren.h"
 #include "hallway.h"
 #include "Util.h"
 #include "math.h"
@@ -87,11 +87,11 @@ void Map::stage1()
         {
         case 0:
         {
-            width=height=(rand()%40+9)*2;
-            Room *troom = new Room(height,width,this);
+            height=(rand()%40+9)*2;
+            Block *troom = new Block(height,this);
             QString name=QString("Room %1").arg(i);
             troom->setObjectName(name);
-            troom->setGeometry(offsetx,offsety,width,height);
+            troom->setGeometry(offsetx,offsety,height,height);
             troom->show();
             break;
         }
@@ -99,7 +99,7 @@ void Map::stage1()
         {
             width=(rand()%40+9)*2;
             height=(rand()%40+9)*2;
-            Room *troom = new Room(height,width,this);
+            Block *troom = new Block(height,width,this);
             QString name=QString("Room %1").arg(i);
             troom->setObjectName(name);
             troom->setGeometry(offsetx,offsety,width,height);
@@ -108,6 +108,12 @@ void Map::stage1()
         }
         case 2:
         {
+            height=(rand()%40+9)*2;
+            Circle *troom = new Circle(height,this);
+            QString name=QString("Room %1").arg(i);
+            troom->setObjectName(name);
+            troom->setGeometry(offsetx,offsety,height,height);
+            troom->show();
             break;
         }
         case 3:
@@ -321,7 +327,7 @@ void Map::createhallways(Room * r1, Room * r2)
             Hallway *hall = new Hallway(r2->y()-(r1->y()+r1->height()),6,true,this);
             hall->setGeometry(xpos,r1->y()+r1->height(),6,r2->y()-(r1->y()+r1->height()));
             hall->show();
-            r1->addDoor(QLine(xpos+1-r1->x(),r1->height()-1,xpos+4-r1->x(),r1->height()));
+            r1->addDoor(QLine(xpos+1-r1->x(),r1->height()-1,xpos+4-r1->x(),r1->height()-1));
             r1->update();
             r2->addDoor(QLine(xpos+1-r2->x(),0,xpos+4-r2->x(),0));
             r2->update();

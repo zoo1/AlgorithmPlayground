@@ -16,12 +16,14 @@ SOURCES += main.cpp\
         generation.cpp \
     map.cpp \
     room.cpp \
-    hallway.cpp
+    hallway.cpp \
+    roomchildren.cpp
 
 HEADERS  += generation.h \
     map.h \
     room.h \
-    hallway.h
+    hallway.h \
+    roomchildren.h
 
 FORMS    += generation.ui
 
