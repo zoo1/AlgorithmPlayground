@@ -39,7 +39,7 @@
     <property name="title">
      <string>Generation Type</string>
     </property>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -138,13 +138,13 @@
       <x>10</x>
       <y>70</y>
       <width>161</width>
-      <height>80</height>
+      <height>101</height>
      </rect>
     </property>
     <property name="title">
      <string>Room Types:</string>
     </property>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -164,7 +164,7 @@
       <item>
        <widget class="QCheckBox" name="checkBox_2">
         <property name="text">
-         <string>Tunnels</string>
+         <string>Dual Rooms</string>
         </property>
        </widget>
       </item>

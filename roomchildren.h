@@ -31,16 +31,21 @@ private:
     int diameter;
 };
 
-//class Douhall : public Room
-//{
-//    Q_OBJECT
-//public:
-//    explicit Douhall(int,int,QWidget *parent=0);
-//    ~Douhall();
-//protected:
-//    void paintEvent(QPaintEvent *e);
-//private:
-
-//};
+class Douhall : public Room
+{
+    Q_OBJECT
+public:
+    explicit Douhall(int,int,int,QWidget *parent=0);
+    void setspawn();
+    void setexit();
+    ~Douhall();
+protected:
+    void paintEvent(QPaintEvent *e);
+private:
+    bool direction;
+    double size;
+    int connects;
+    bool s1,s2;
+};
 
 #endif // ROOMCHILDREN_H

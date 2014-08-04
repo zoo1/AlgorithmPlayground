@@ -15,18 +15,6 @@ void Room::addDoor(QLine doo)
     doors.push_back(doo);
 }
 
-////Function sets spawn and then checks for the appropriate place to set the spawn
-//void Room::setspawn()
-//{
-
-//}
-
-////Function sets exit and then checks for the appropriate place to set the exit
-//void Room::setexit()
-//{
-
-//}
-
 void Room::addconnects(Room *connect)
 {
     connects.push_back(connect);

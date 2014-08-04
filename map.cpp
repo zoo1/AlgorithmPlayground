@@ -23,7 +23,7 @@ Map::Map(QWidget *parent) :
     desc->setObjectName("desc");
     desc->setGeometry(0,0,maximumWidth(),10);
     desc->show();
-    QTimer::singleShot(50, this, SLOT(stage1()));
+    QTimer::singleShot(100, this, SLOT(stage1()));
 }
 
 void Map::Display(QString out)
@@ -45,7 +45,7 @@ Map::~Map()
     Stage 2: Generate the random location for each room and verify no overlap occurs.
     Stage 3: Create hallways connecting all of the rooms together. This makes sure that
         you can travel from any one room to another.
-    Stage 4: Difficulty analytics,the beginning and end locations, and removing hallway overlap
+    Stage 4: Difficulty analytics and placing the beginning and end locations
   **/
 
 void Map::stage1()
@@ -112,12 +112,18 @@ void Map::stage1()
             Circle *troom = new Circle(height,this);
             QString name=QString("Room %1").arg(i);
             troom->setObjectName(name);
-            troom->setGeometry(offsetx,offsety,height,height);
+            troom->setGeometry(offsetx,offsety,height+1,height+1);
             troom->show();
             break;
         }
         case 3:
         {
+            height=(rand()%30+20)*2;
+            Douhall *troom = new Douhall(height,rand()%2,rand()%2+1,this);
+            QString name=QString("Room %1").arg(i);
+            troom->setObjectName(name);
+            troom->setGeometry(offsetx,offsety,height+1,height+1);
+            troom->show();
             break;
         }
         }
@@ -157,6 +163,7 @@ void Map::stage2()
         }
         roo->move(x,y);
     }
+    Display(QString("Stage 2 Complete"));
     QTimer::singleShot(1000, this, SLOT(stage3()));
 }
 
@@ -216,6 +223,7 @@ void Map::stage3()
             q=1;
         }
     }
+    Display(QString("Stage 3 Complete"));
     QTimer::singleShot(1000, this, SLOT(stage4()));
 
 }
@@ -244,30 +252,13 @@ void Map::stage4()
     }
     rooms[j]->setexit();
     rooms[j]->update();
-    //Remove hallways overlapping rooms
-    QList<Hallway*> hallways=this->findChildren<Hallway*>();
-    for(i=0;i<rooms.size();i++)
-    {
-        for(j=0;j<hallways.size();j++)
-        {
-            //Horizontal Overlap
-            if(!(rooms[i]->x()>=(hallways[j]->x()+hallways[j]->width())||(rooms[i]->x()+rooms[i]->width())<=hallways[j]->x()))
-            {
-                //Vertical Overlap
-                if(!(rooms[i]->y()>=(hallways[j]->y()+hallways[j]->height())||(rooms[i]->y()+rooms[i]->height())<=hallways[j]->y()))
-                {
-                    removeoverlap(rooms[i],hallways[j]);
-                }
-            }
-        }
-    }
+    Display(QString("Stage 4 Complete"));
 }
 
 /**
   Helper function: These are helper functions for the stage functions.
     createhallways: Used to create hallways and add doors.
     recursiveDif: A recursive function which iterates through the rooms and marks the difficulty of the room.
-    removeoverlap: Removes the portions of a hallway which have overlapped into a room.
     compareconnect: Compares lines based on thier length.
     isinside: Checks if a point is inside of a room.
   **/
@@ -428,20 +419,6 @@ void Map::recursiveDif(std::vector<Room *> nodes, int difficulty)
     {
         recursiveDif(next,difficulty);
     }
-}
-
-void Map::removeoverlap(Room* room, Hallway* hallway)
-{
-    bool tl=isinside(room,hallway->pos());
-    bool tr=isinside(room,hallway->pos()+QPoint(hallway->width(),0));
-    bool bl=isinside(room,hallway->pos()+QPoint(0,hallway->height()));
-    bool br=isinside(room,hallway->pos()+QPoint(hallway->width(),hallway->height()));
-    if(tl&&tr)
-    {
-
-    }
-
-
 }
 
 bool Map::isinside(Room* room,QPoint p)
