@@ -257,7 +257,6 @@ Douhall::Douhall(int siz, int dir,int doorz, QWidget *parent)
     direction=dir;
     size=siz;
     connects=doorz;
-    s1=s2=false;
 
     if(connects==1)
     {
@@ -346,6 +345,8 @@ Douhall::~Douhall()
 
 void Douhall::paintEvent(QPaintEvent *e)
 {
+    bool s1=false;
+    bool s2=false;
     QPainter painter(this);
     QPolygon box1;
     QPolygon box2;
@@ -420,68 +421,38 @@ void Douhall::paintEvent(QPaintEvent *e)
         painter.drawPolygon(temph1);
         painter.drawPolygon(temph2);
     }
-    if(s1)
-    {
-        QPolygon temphall;
-        if(direction)
-        {
-            temphall<<QPoint(size/3,0);
-            temphall<<QPoint(size/3,6);
-            temphall<<QPoint((2*size)/3,6);
-            temphall<<QPoint((2*size)/3,0);
-        }
-        else
-        {
-            temphall<<QPoint(0,size/3);
-            temphall<<QPoint(6,size/3);
-            temphall<<QPoint(6,(2*size)/3);
-            temphall<<QPoint(0,(2*size)/3);
-        }
-        painter.drawPolygon(temphall);
-    }
-    if(s2)
-    {
-        QPolygon temphall;
-        if(direction)
-        {
-            temphall<<QPoint(size/3,size);
-            temphall<<QPoint(size/3,size-6);
-            temphall<<QPoint((2*size)/3,size-6);
-            temphall<<QPoint((2*size)/3,size);
-        }
-        else
-        {
-            temphall<<QPoint(size,size/3);
-            temphall<<QPoint(size-6,size/3);
-            temphall<<QPoint(size-6,(2*size)/3);
-            temphall<<QPoint(size,(2*size)/3);
-        }
-        painter.drawPolygon(temphall);
-    }
     if(isspawn||issexit)
     {
         QPolygon box;
         switch(is)
         {
         case 0:
+            if(!direction)
+                s1=true;
             box<<QPoint(0,(height()/2)-3);
             box<<QPoint(0,(height()/2)+3);
             box<<QPoint(6,(height()/2)+3);
             box<<QPoint(6,(height()/2)-3);
             break;
         case 1:
+            if(direction)
+                s1=true;
             box<<QPoint((width()/2)-3,0);
             box<<QPoint((width()/2)+3,0);
             box<<QPoint((width()/2)+3,6);
             box<<QPoint((width()/2)-3,6);
             break;
         case 2:
+            if(!direction)
+                s2=true;
             box<<QPoint(width()-1,(height()/2)-3);
             box<<QPoint(width()-1,(height()/2)+3);
             box<<QPoint(width()-7,(height()/2)+3);
             box<<QPoint(width()-7,(height()/2)-3);
             break;
         case 3:
+            if(direction)
+                s2=true;
             box<<QPoint((width()/2)-3,height()-1);
             box<<QPoint((width()/2)+3,height()-1);
             box<<QPoint((width()/2)+3,height()-7);
@@ -505,6 +476,86 @@ void Douhall::paintEvent(QPaintEvent *e)
         // Draw polygon
         painter.fillPath(path, brush);
         painter.drawPolygon(box);
+    }
+    //check if any of the doors need an additional connection to be made
+    for(int i=0;i<doors.size();i++)
+    {
+        if(doors[i].y1()==0&&doors[i].y2()==0&&direction&&((doors[i].x1()<=(2*size)/3&&doors[i].x1()>=size/3)||(doors[i].x2()<=(2*size)/3&&doors[i].x2()>=size/3)))
+        {
+            s1=true;
+        }
+        if(doors[i].y1()==size&&doors[i].y2()==size&&direction&&((doors[i].x1()<=(2*size)/3&&doors[i].x1()>=size/3)||(doors[i].x2()<=(2*size)/3&&doors[i].x2()>=size/3)))
+        {
+            s2=true;
+        }
+        if(doors[i].x1()==0&&doors[i].x2()==0&&(!direction)&&((doors[i].y1()<=(2*size)/3&&doors[i].y1()>=size/3)||(doors[i].y2()<=(2*size)/3&&doors[i].y2()>=size/3)))
+        {
+            s1=true;
+        }
+        if(doors[i].x1()==size&&doors[i].x2()==size&&(!direction)&&((doors[i].y1()<=(2*size)/3&&doors[i].y1()>=size/3)||(doors[i].y2()<=(2*size)/3&&doors[i].y2()>=size/3)))
+        {
+            s2=true;
+        }
+    }
+    if(s1)
+    {
+        QLine removal1,removal2;
+        QPolygon temphall;
+        if(direction)
+        {
+            temphall<<QPoint(size/3,0);
+            temphall<<QPoint(size/3,6);
+            temphall<<QPoint((2*size)/3,6);
+            temphall<<QPoint((2*size)/3,0);
+            removal1=QLine(size/3,1,size/3,5);
+            removal2=QLine((2*size)/3,5,(2*size)/3,1);
+        }
+        else
+        {
+            temphall<<QPoint(0,size/3);
+            temphall<<QPoint(6,size/3);
+            temphall<<QPoint(6,(2*size)/3);
+            temphall<<QPoint(0,(2*size)/3);
+            removal1=QLine(1,size/3,5,size/3);
+            removal2=QLine(5,(2*size)/3,1,(2*size)/3);
+        }
+        QPen pen1;
+        painter.setPen(pen1);
+        painter.drawPolygon(temphall);
+        QPen pen(palette().background().color());
+        painter.setPen(pen);
+        painter.drawLine(removal1);
+        painter.drawLine(removal2);
+    }
+    if(s2)
+    {
+        QPolygon temphall;
+        QLine removal1,removal2;
+        if(direction)
+        {
+            temphall<<QPoint(size/3,size);
+            temphall<<QPoint(size/3,size-6);
+            temphall<<QPoint((2*size)/3,size-6);
+            temphall<<QPoint((2*size)/3,size);
+            removal1=QLine(size/3,size-1,size/3,size-5);
+            removal2=QLine((2*size)/3,size-5,(2*size)/3,size-1);
+        }
+        else
+        {
+            temphall<<QPoint(size,size/3);
+            temphall<<QPoint(size-6,size/3);
+            temphall<<QPoint(size-6,(2*size)/3);
+            temphall<<QPoint(size,(2*size)/3);
+            removal1=QLine(size-1,size/3,size-5,size/3);
+            removal2=QLine(size-5,(2*size)/3,size-1,(2*size)/3);
+        }
+        QPen pen1;
+        painter.setPen(pen1);
+        painter.drawPolygon(temphall);
+        QPen pen(palette().background().color());
+        painter.setPen(pen);
+        painter.drawLine(removal1);
+        painter.drawLine(removal2);
     }
     QPen pen(palette().background().color());
     painter.setPen(pen);

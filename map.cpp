@@ -83,7 +83,7 @@ void Map::stage1()
             offsety=0;
             offsetx=offsetx+100;
         }
-        switch(rand()%available.size())
+        switch(available[rand()%available.size()])
         {
         case 0:
         {

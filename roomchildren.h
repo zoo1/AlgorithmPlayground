@@ -45,7 +45,6 @@ private:
     bool direction;
     double size;
     int connects;
-    bool s1,s2;
 };
 
 #endif // ROOMCHILDREN_H
