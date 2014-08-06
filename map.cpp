@@ -13,7 +13,7 @@
 //Globals to transfer over data when the widget is first created
 extern int RoomMin;
 extern int RoomMax;
-extern bool rectangular,tunnels,circles;
+extern bool rectangular,tunnels,circles,squares;
 
 Map::Map(QWidget *parent) :
     QWidget(parent, Qt::Window)
@@ -53,9 +53,13 @@ void Map::stage1()
     int totalrooms=((RoomMax==RoomMin) ? RoomMax : rand()%(RoomMax-RoomMin)+RoomMin);
     // Quick print out of the map setup
     std::cout<<"Rooms: "<<totalrooms<<std::endl;
-    std::cout<<"Room types: Squares";
+    std::cout<<"Room types:";
     std::vector<int> available;
-    available.push_back(0);
+    if(squares)
+    {
+        std::cout<<" Squares";
+        available.push_back(0);
+    }
     if(rectangular)
     {
         std::cout<<" Rectangles";

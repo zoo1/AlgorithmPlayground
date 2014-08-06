@@ -12,6 +12,7 @@
 //Globals
 bool errMin=true;
 bool errMax=true;
+bool squares=true;
 bool rectangular=false;
 bool tunnels=false;
 bool circles=false;
@@ -29,6 +30,9 @@ Generation::Generation(QWidget *parent) :
     std::string max = static_cast<std::ostringstream*>( &(std::ostringstream() << MAX) )->str();
     ui->Roommin->setPlaceholderText(QString::fromStdString(min));
     ui->Roommax->setPlaceholderText(QString::fromStdString(max));
+    ui->Tiny->setDisabled(true);
+    ui->Maze->setDisabled(true);
+    ui->checkBox_4->setChecked(true);
 }
 
 Generation::~Generation()
@@ -137,19 +141,53 @@ void Generation::checkminmax()
 /** Check boxes for selecting each of the different room types. In order rectangular, tunnels, and circles
  *  Each changes a global which is passed over when a new map is created
  **/
-void Generation::on_checkBox_clicked()
+
+void Generation::on_checkBox_4_clicked(bool checked)
 {
-    rectangular=(!rectangular);
+    if(!checked&&!rectangular&&!tunnels&&!circles)
+    {
+        ui->checkBox_4->setChecked(!checked);
+    }
+    else
+    {
+        squares=(!squares);
+    }
 }
 
-void Generation::on_checkBox_2_clicked()
+void Generation::on_checkBox_clicked(bool checked)
 {
-    tunnels=(!tunnels);
+    if(!checked&&!squares&&!tunnels&&!circles)
+    {
+        ui->checkBox->setChecked(!checked);
+    }
+    else
+    {
+        rectangular=(!rectangular);
+    }
 }
 
-void Generation::on_checkBox_3_clicked()
+void Generation::on_checkBox_2_clicked(bool checked)
 {
-    circles=(!circles);
+    if(!checked&&!squares&&!rectangular&&!circles)
+    {
+        ui->checkBox_2->setChecked(!checked);
+    }
+    else
+    {
+        tunnels=(!tunnels);
+    }
+}
+
+void Generation::on_checkBox_3_clicked(bool checked)
+{
+    if(!checked&&!squares&&!rectangular&&!tunnels)
+    {
+        ui->checkBox_3->setChecked(!checked);
+    }
+    else
+    {
+        circles=(!circles);
+    }
 }
 
 //Creates the integer value out of the string if it cannot be translated to a string returns -1, returns -2 if the string is empty
